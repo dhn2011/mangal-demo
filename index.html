@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<title>Mangal демо-меню</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Forum&family=Golos+Text:wght@400;500;600;700&display=swap">
+<style>
+  /* Layout: a phone-sized Telegram Mini App on a coal-black stage; ornament bands in gold divide sections like a carpet border. */
+  :root {
+    color-scheme: dark;
+    --coal: #0c0908;
+    --soot: #171110;
+    --soot-2: #221816;
+    --seam: #3a2a22;
+    --wine: #8f1d21;
+    --wine-hi: #b3262b;
+    --ember: #f07a2a;
+    --gold: #d6aa5c;
+    --gold-dim: #8c6c3a;
+    --parch: #f1e4c8;
+    --ash: #a8978a;
+    --ok: #5fbf7f;
+    --tg-bg: #0e1621;
+    --tg-bubble: #182533;
+    --tg-btn: #22303f;
+    --tg-blue: #5eb5f7;
+    --tg-dim: #6d7f8f;
+    --display: "Forum", "Times New Roman", Georgia, serif;
+    --body: "Golos Text", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --r: 14px;
+    --band: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='12' viewBox='0 0 28 12'%3E%3Cg fill='none' stroke='%23d6aa5c' stroke-width='1'%3E%3Cpath d='M0 6h4l3-4 3 4-3 4-3-4M14 6l3-4 3 4-3 4z M24 6h4'/%3E%3Ccircle cx='17' cy='6' r='1' fill='%23d6aa5c'/%3E%3C/g%3E%3C/svg%3E");
+    --weave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23d6aa5c' stroke-opacity='.09'%3E%3Cpath d='M20 2l18 18-18 18L2 20z'/%3E%3Cpath d='M20 10l10 10-10 10-10-10z'/%3E%3Ccircle cx='20' cy='20' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--coal); color: var(--parch); font-family: var(--body); font-size: 15px; line-height: 1.4; }
+  body {
+    min-height: 100%;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    padding-block: 14px 28px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    background: radial-gradient(ellipse at 50% 0%, #2a1310 0%, var(--coal) 60%) fixed, var(--coal);
+  }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, .opt:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  .flag { font-size: 12px; color: var(--gold); border: 1px dashed var(--gold-dim); border-radius: 999px; padding: 4px 12px; letter-spacing: .02em; }
+  .switch { display: flex; background: var(--soot); border: 1px solid var(--seam); border-radius: 999px; padding: 4px; }
+  .switch button { border: 0; background: none; color: var(--ash); padding: 8px 16px; border-radius: 999px; font-weight: 600; font-size: 14px; cursor: pointer; }
+  .switch button.on { background: var(--wine); color: var(--parch); }
+
+  .phone { width: min(390px, 100%); height: min(800px, calc(100vh - 110px)); min-height: 560px; background: var(--coal); border: 1px solid var(--seam); border-radius: 30px; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 0 6px #050404; }
+
+  .tgbar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--soot); border-bottom: 1px solid var(--seam); flex-shrink: 0; }
+  .tgbar img { width: 34px; height: 34px; border-radius: 50%; }
+  .tgbar b { display: block; font-size: 15px; font-weight: 600; }
+  .tgbar small { color: var(--ash); font-size: 12px; }
+  .tgbar .x { margin-left: auto; color: var(--ash); font-size: 13px; }
+
+  .screen { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; position: relative; }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* hero */
+  .hero { position: relative; padding: 18px 16px 20px; text-align: center; background: radial-gradient(circle at 50% 38%, #3b1a12 0%, #000 62%); overflow: hidden; }
+  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .logo-wrap { position: relative; width: 210px; height: 210px; margin: 0 auto; }
+  .logo-wrap::before { content: ""; position: absolute; inset: -14px; border-radius: 50%; background: radial-gradient(circle, rgba(240,122,42,.35), transparent 65%); animation: glow 3.2s ease-in-out infinite; }
+  .logo-wrap img { position: relative; width: 100%; height: 100%; border-radius: 50%; -webkit-mask: radial-gradient(circle, #000 66%, transparent 71%); mask: radial-gradient(circle, #000 66%, transparent 71%); }
+  .logo-wrap .ring { position: absolute; inset: -8px; border-radius: 50%; border: 1px dashed var(--gold-dim); animation: spin 60s linear infinite; }
+  @keyframes glow { 50% { opacity: .55; transform: scale(1.04); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hero h1 { position: relative; font-family: var(--display); font-weight: 400; font-size: 30px; letter-spacing: .02em; margin-top: 10px; color: var(--parch); text-wrap: balance; }
+  .hero h1 em { font-style: normal; color: var(--ember); }
+  .hero p { position: relative; color: var(--ash); font-size: 13px; margin-top: 4px; }
+  .live { position: relative; display: inline-flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+  .live span { font-size: 12px; padding: 5px 10px; border-radius: 999px; background: rgba(0,0,0,.5); border: 1px solid var(--seam); }
+  .live .open::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); margin-right: 6px; box-shadow: 0 0 8px var(--ok); vertical-align: 1px; }
+  .live .closed::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ash); margin-right: 6px; vertical-align: 1px; }
+
+  .band { height: 12px; background: var(--band) repeat-x center; opacity: .75; }
+  .h2 { font-family: var(--display); font-size: 24px; font-weight: 400; padding: 18px 16px 8px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .h2 small { font-family: var(--body); font-size: 12px; color: var(--ash); }
+
+  /* promos */
+  .promos { display: flex; gap: 10px; overflow-x: auto; padding: 4px 16px 6px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .promos::-webkit-scrollbar { display: none; }
+  .promo { scroll-snap-align: center; flex: 0 0 84%; min-height: 150px; border-radius: var(--r); padding: 14px 14px 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 4px; border: 1px solid var(--seam); background: var(--weave), linear-gradient(140deg, var(--c1), var(--c2)); }
+  .promo::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 10px; background: var(--band) repeat-x center; opacity: .5; }
+  .promo .k { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: var(--gold); }
+  .promo b { font-family: var(--display); font-weight: 400; font-size: 22px; line-height: 1.1; text-wrap: balance; max-width: 78%; }
+  .promo p { font-size: 12.5px; color: rgba(241,228,200,.8); max-width: 80%; }
+  .promo .cta { margin-top: auto; align-self: flex-start; border: 1px solid var(--gold); background: rgba(0,0,0,.35); color: var(--parch); border-radius: 999px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; margin-bottom: 8px; }
+  .promo svg { position: absolute; right: -6px; top: 14px; width: 96px; height: 96px; opacity: .9; }
+  .dots { display: flex; justify-content: center; gap: 6px; padding: 6px 0 0; }
+  .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--seam); transition: background .2s, width .2s; }
+  .dots i.on { background: var(--gold); width: 16px; border-radius: 3px; }
+
+  /* categories */
+  .cats { position: sticky; top: 0; z-index: 3; display: flex; gap: 6px; overflow-x: auto; padding: 10px 16px; background: rgba(12,9,8,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--seam); scrollbar-width: none; }
+  .cats::-webkit-scrollbar { display: none; }
+  .cats button { flex-shrink: 0; border: 1px solid var(--seam); background: var(--soot); padding: 7px 13px; border-radius: 999px; font-size: 13px; cursor: pointer; }
+  .cats button.on { background: var(--wine); border-color: var(--wine-hi); }
+
+  /* hits row */
+  .hits { display: flex; gap: 10px; overflow-x: auto; padding: 2px 16px 4px; scrollbar-width: none; }
+  .hits::-webkit-scrollbar { display: none; }
+  .hit { flex: 0 0 140px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 4px 16px; }
+  .card { background: var(--soot); border: 1px solid var(--seam); border-radius: var(--r); overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: transform .15s, border-color .15s; }
+  .card:hover { border-color: var(--gold-dim); }
+  .card:active { transform: scale(.98); }
+  .pic { aspect-ratio: 4 / 3; max-width: 100%; position: relative; display: grid; place-items: center; background: var(--weave), radial-gradient(circle at 50% 70%, rgba(240,122,42,.22), transparent 60%), #140d0b; border-bottom: 1px solid var(--seam); }
+  .pic svg { width: 78%; height: 78%; }
+  .tag { position: absolute; top: 7px; left: 7px; font-size: 10px; font-weight: 700; letter-spacing: .03em; background: var(--gold); color: #24150a; padding: 2px 7px; border-radius: 5px; }
+  .tag.hot { background: var(--ember); color: #1d0c03; }
+  .card .body { padding: 9px 10px 10px; display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+  .card .name { font-weight: 600; font-size: 13.5px; line-height: 1.25; }
+  .card .desc { color: var(--ash); font-size: 11.5px; flex: 1; }
+  .card .row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 6px; }
+  .price { font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .add { border: 0; background: var(--wine); width: 32px; height: 32px; border-radius: 10px; font-size: 20px; cursor: pointer; flex-shrink: 0; }
+  .add:hover { background: var(--wine-hi); }
+  .qty { display: flex; align-items: center; gap: 6px; background: var(--wine); border-radius: 10px; padding: 0 4px; height: 32px; flex-shrink: 0; }
+  .qty button { border: 0; background: none; font-size: 18px; width: 22px; cursor: pointer; }
+  .qty b { font-size: 14px; min-width: 12px; text-align: center; font-variant-numeric: tabular-nums; }
+
+  /* atmosphere */
+  .atmo { margin: 8px 16px 0; border: 1px solid var(--seam); border-radius: var(--r); background: var(--weave), var(--soot); padding: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .atmo div { display: flex; flex-direction: column; gap: 2px; }
+  .atmo b { font-family: var(--display); font-weight: 400; font-size: 26px; color: var(--gold); line-height: 1; }
+  .atmo span { font-size: 12px; color: var(--ash); }
+  .atmo .book { grid-column: span 2; border: 1px solid var(--gold); background: transparent; border-radius: 10px; padding: 10px; font-weight: 600; cursor: pointer; }
+  .quote { font-family: var(--display); font-size: 20px; text-align: center; color: var(--gold); padding: 22px 24px 8px; text-wrap: balance; }
+  .note { margin: 6px 16px 96px; font-size: 11px; color: var(--ash); text-align: center; }
+
+  .mainbtn { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 5; border: 0; border-radius: 14px; background: linear-gradient(180deg, var(--wine-hi), var(--wine)); font-weight: 700; font-size: 16px; padding: 15px 16px; cursor: pointer; display: none; justify-content: space-between; align-items: center; box-shadow: 0 10px 28px rgba(143,29,33,.5), inset 0 1px 0 rgba(255,255,255,.12); }
+  .mainbtn.show { display: flex; }
+  .mainbtn.bump { animation: bump .35s; }
+  @keyframes bump { 40% { transform: scale(1.04); } }
+  .mainbtn .n { background: rgba(0,0,0,.3); border-radius: 999px; padding: 1px 8px; font-size: 13px; margin-left: 6px; }
+
+  .fly { position: absolute; z-index: 9; width: 14px; height: 14px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 14px 4px rgba(240,122,42,.7); pointer-events: none; transition: transform .55s cubic-bezier(.5,-.3,.7,.6), opacity .55s; }
+
+  /* sheet */
+  .veil { position: absolute; inset: 0; z-index: 7; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; animation: fade .2s; }
+  @keyframes fade { from { opacity: 0; } }
+  .sheet { width: 100%; background: var(--soot); border-top: 1px solid var(--gold-dim); border-radius: 22px 22px 0 0; padding: 10px 16px 16px; animation: up .25s ease-out; display: flex; flex-direction: column; gap: 10px; }
+  @keyframes up { from { transform: translateY(40%); } }
+  .sheet .grab { width: 40px; height: 4px; border-radius: 2px; background: var(--seam); align-self: center; }
+  .sheet .pic { border-radius: var(--r); border: 1px solid var(--seam); aspect-ratio: 16 / 10; }
+  .sheet h3 { font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.1; }
+  .sheet p { color: var(--ash); font-size: 13.5px; }
+  .sheet .go { border: 0; border-radius: 12px; background: var(--wine); padding: 14px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; justify-content: space-between; }
+
+  /* checkout */
+  .page { padding: 14px 16px 100px; display: flex; flex-direction: column; gap: 12px; }
+  .back { background: none; border: 0; color: var(--gold); font-size: 14px; cursor: pointer; align-self: flex-start; }
+  .page h2 { font-family: var(--display); font-weight: 400; font-size: 30px; }
+  .box { background: var(--soot); border: 1px solid var(--seam); border-radius: var(--r); padding: 10px 12px; }
+  .line { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 0; font-size: 14px; }
+  .line + .line { border-top: 1px solid var(--seam); }
+  .line span:first-child { min-width: 0; }
+  .muted { color: var(--ash); }
+  .total { font-size: 18px; font-weight: 700; }
+  .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: var(--soot-2); padding: 4px; border-radius: 12px; }
+  .seg button { border: 0; background: none; color: var(--ash); padding: 10px; border-radius: 9px; font-weight: 600; cursor: pointer; }
+  .seg button.on { background: var(--wine); color: var(--parch); }
+  .opt { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border: 1px solid var(--seam); border-radius: 12px; cursor: pointer; background: var(--soot); }
+  .opt.on { border-color: var(--gold-dim); background: #24140f; }
+  .opt .dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--ash); flex-shrink: 0; }
+  .opt.on .dot { border-color: var(--gold); background: radial-gradient(circle, var(--gold) 42%, transparent 48%); }
+  .opt .grow { flex: 1; min-width: 0; }
+  .opt small { display: block; color: var(--ash); font-size: 12px; }
+  .map { height: 130px; border-radius: 12px; border: 1px solid var(--seam); position: relative; overflow: hidden; background:
+      linear-gradient(90deg, transparent 49%, #2b1d18 50%, transparent 51%) 0 0 / 36px 36px,
+      linear-gradient(0deg, transparent 49%, #2b1d18 50%, transparent 51%) 0 0 / 36px 36px,
+      linear-gradient(35deg, transparent 47%, #3a2820 48%, #3a2820 52%, transparent 53%), #150e0c; }
+  .map .ring { position: absolute; left: 50%; top: 50%; border-radius: 50%; border: 1px dashed var(--gold); background: rgba(214,170,92,.06); transform: translate(-50%, -50%); transition: width .3s, height .3s; }
+  .map .home { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 22px; height: 22px; border-radius: 50%; overflow: hidden; border: 1px solid var(--gold); }
+  .map .home img { width: 100%; height: 100%; }
+  .map .pin { position: absolute; font-size: 24px; transform: translate(-50%, -100%); transition: left .3s, top .3s; }
+  .hint { font-size: 12px; color: var(--ash); }
+  .upsell { display: flex; gap: 8px; }
+  .upsell button { flex: 1; border: 1px dashed var(--gold-dim); background: transparent; border-radius: 10px; padding: 8px; font-size: 12.5px; cursor: pointer; text-align: left; }
+  .upsell button b { display: block; font-size: 13px; }
+  .sec-t { font-family: var(--display); font-size: 20px; }
+
+  /* status */
+  .skewer { position: relative; height: 70px; margin: 6px 0 2px; }
+  .skewer svg { width: 100%; height: 100%; }
+  .cube { transition: fill .5s, filter .5s; }
+  .cube.lit { fill: var(--ember); filter: drop-shadow(0 0 6px rgba(240,122,42,.8)); }
+  .steps { display: flex; flex-direction: column; }
+  .st { display: flex; gap: 12px; padding-bottom: 14px; position: relative; }
+  .st:not(:last-child)::after { content: ""; position: absolute; left: 11px; top: 26px; bottom: 2px; width: 2px; background: var(--seam); }
+  .st .c { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--seam); flex-shrink: 0; display: grid; place-items: center; font-size: 12px; }
+  .st.done .c { background: var(--ok); border-color: var(--ok); color: #0c1a10; }
+  .st.now .c { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(214,170,92,.18); }
+  .st.done:not(:last-child)::after { background: var(--ok); }
+  .st b { display: block; font-size: 14px; }
+  .st small { color: var(--ash); font-size: 12px; }
+
+  /* staff chat */
+  .tgbar.staff { background: #17212b; border-color: var(--tg-bg); }
+  .tgbar.staff .ava { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #3a6b98, #24425f); display: grid; place-items: center; }
+  .chat { background: var(--tg-bg); flex: 1; overflow-y: auto; padding: 14px 10px 20px; display: flex; flex-direction: column; gap: 8px; }
+  .msg { background: var(--tg-bubble); border-radius: 14px; padding: 10px 12px; max-width: 92%; font-size: 13.5px; line-height: 1.45; white-space: pre-line; color: #e9eef3; }
+  .msg .from { color: var(--tg-blue); font-weight: 700; font-size: 12.5px; margin-bottom: 4px; }
+  .msg .time { color: var(--tg-dim); font-size: 11px; text-align: right; margin-top: 4px; }
+  .kb { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; max-width: 92%; }
+  .kb button { border: 0; background: var(--tg-btn); color: #fff; padding: 9px 6px; border-radius: 9px; font-size: 13px; cursor: pointer; }
+  .kb button:disabled { opacity: .35; cursor: default; }
+  .kb .full { grid-column: span 2; }
+  .sys { align-self: center; background: rgba(0,0,0,.35); color: #a9b8c6; font-size: 12px; padding: 4px 10px; border-radius: 999px; }
+  .empty { margin: auto; text-align: center; color: var(--tg-dim); font-size: 14px; padding: 30px; }
+
+  .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 90px); background: var(--soot-2); border: 1px solid var(--gold-dim); padding: 10px 16px; border-radius: 12px; font-size: 13px; transition: transform .25s; z-index: 20; max-width: calc(100% - 32px); }
+  .toast.show { transform: translate(-50%, 0); }
+  .foot { color: var(--ash); font-size: 12px; text-align: center; max-width: 390px; opacity: .7; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<p class="flag">Демо-прототип · заказы и оплата не настоящие</p>
+<div class="switch">
+  <button class="on" data-view="client" id="v-client">Клиент</button>
+  <button data-view="staff" id="v-staff">Персонал</button>
+</div>
+<div class="phone" id="phone"></div>
+<p class="foot">Блюда и цены взяты из меню ресторана. Вместо иллюстраций в боте будут ваши фото.</p>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ---------- illustrations: engraved gold line art ---------- */
+const G = "#d6aa5c", E = "#f07a2a", W = "#8f1d21";
+const flames = (y = 78) => `<g fill="${E}" opacity=".85"><path d="M30 ${y}c-3-6 2-8 1-13 5 4 6 9 3 13z"/><path d="M58 ${y}c-4-7 3-10 1-16 7 5 7 11 4 16z"/><path d="M86 ${y}c-3-6 2-8 1-13 5 4 6 9 3 13z"/></g>`;
+const ART = {
+  skewer: `<svg viewBox="0 0 120 90"><g stroke="${G}" stroke-width="1.6" fill="none" stroke-linecap="round"><path d="M8 52 L112 30"/><path d="M104 32l8-2-6 6"/></g>${[20, 38, 56, 74].map((x, i) => `<rect x="${x}" y="${38 - i * 3.6}" width="15" height="15" rx="4" transform="rotate(-12 ${x + 7} ${46 - i * 3.6})" fill="${W}" stroke="${G}" stroke-width="1.3"/>`).join("")}<g stroke="${G}" stroke-width="1" opacity=".6"><path d="M24 62q4 6 0 12M60 56q4 6 0 12M94 50q4 6 0 12"/></g>${flames(86)}</svg>`,
+  platter: `<svg viewBox="0 0 120 90"><ellipse cx="60" cy="56" rx="50" ry="22" fill="#1d1210" stroke="${G}" stroke-width="1.6"/><ellipse cx="60" cy="56" rx="42" ry="16" fill="none" stroke="${G}" stroke-width=".8" stroke-dasharray="2 3"/>${[[22, 50], [40, 44], [58, 52], [76, 44]].map(([x, y]) => `<g><path d="M${x - 4} ${y + 18} L${x + 26} ${y - 2}" stroke="${G}" stroke-width="1.2"/>${[0, 9, 18].map(d => `<rect x="${x + d}" y="${y + 4 - d * .65}" width="8" height="8" rx="2.5" fill="${W}" stroke="${G}" stroke-width="1"/>`).join("")}</g>`).join("")}<g fill="#3f7a3a" stroke="${G}" stroke-width=".8"><path d="M30 66q6-8 12 0q-6 5-12 0z"/><path d="M84 66q6-8 12 0q-6 5-12 0z"/></g></svg>`,
+  lamb: `<svg viewBox="0 0 120 90"><ellipse cx="60" cy="70" rx="48" ry="10" fill="none" stroke="${G}" stroke-width="1.2"/><path d="M28 58c-2-22 20-34 44-30 18 3 26 16 22 28-3 9-16 12-34 12-18 0-31-2-32-10z" fill="${W}" stroke="${G}" stroke-width="1.6"/><path d="M40 46c10-6 24-8 36-4M38 54c14-5 30-6 44-1" stroke="${G}" stroke-width=".9" fill="none" opacity=".7"/><path d="M94 44l14-10m-4-3 7 1-1 7" stroke="${G}" stroke-width="1.6" fill="none" stroke-linecap="round"/><g stroke="${G}" stroke-width=".9" opacity=".55" fill="none"><path d="M50 20q4-6 0-12M64 22q4-6 0-12"/></g></svg>`,
+  fish: `<svg viewBox="0 0 120 90"><path d="M14 46c18-22 56-26 78 0-22 26-60 22-78 0z" fill="${W}" stroke="${G}" stroke-width="1.6"/><path d="M92 46l18-14v28z" fill="none" stroke="${G}" stroke-width="1.6"/><circle cx="30" cy="42" r="2.4" fill="${G}"/><g stroke="${G}" stroke-width=".9" fill="none" opacity=".7"><path d="M44 34q6 12 0 24M56 32q6 14 0 28M68 33q6 13 0 26"/></g><g stroke="${E}" stroke-width="2" opacity=".7"><path d="M20 76h80" stroke-dasharray="6 5"/></g></svg>`,
+  veg: `<svg viewBox="0 0 120 90"><path d="M22 60c0-16 10-26 22-26s16 10 14 22c-2 14-12 22-22 22-9 0-14-8-14-18z" fill="${W}" stroke="${G}" stroke-width="1.5"/><path d="M42 34c0-6 4-10 8-11" stroke="#5c8f4a" stroke-width="2" fill="none"/><circle cx="80" cy="54" r="18" fill="#a8341f" stroke="${G}" stroke-width="1.5"/><path d="M74 37l6 4 6-4" stroke="#5c8f4a" stroke-width="2" fill="none"/><path d="M60 74c8-14 28-22 46-14-6 14-30 20-46 14z" fill="#3a1f33" stroke="${G}" stroke-width="1.3"/>${flames(88)}</svg>`,
+  dolma: `<svg viewBox="0 0 120 90"><path d="M10 50h100c-4 20-24 30-50 30S14 70 10 50z" fill="#1d1210" stroke="${G}" stroke-width="1.6"/><path d="M14 56h92" stroke="${G}" stroke-width=".8" stroke-dasharray="3 3"/>${[[30, 40], [48, 36], [66, 36], [84, 40], [40, 46], [74, 46]].map(([x, y]) => `<g><ellipse cx="${x}" cy="${y}" rx="11" ry="7" fill="#3f6a32" stroke="${G}" stroke-width="1.1"/><path d="M${x - 8} ${y}q8-4 16 0M${x - 6} ${y + 3}q6-3 12 0" stroke="${G}" stroke-width=".7" fill="none"/></g>`).join("")}<path d="M88 26q10-6 16 2-6 6-16-2z" fill="#f1e4c8" stroke="${G}" stroke-width="1"/></svg>`,
+  salad: `<svg viewBox="0 0 120 90"><path d="M12 44h96c-2 24-22 38-48 38S14 68 12 44z" fill="#1d1210" stroke="${G}" stroke-width="1.6"/><path d="M20 50q40 8 80 0" stroke="${G}" stroke-width=".8" fill="none" stroke-dasharray="2 3"/><g stroke="${G}" stroke-width="1"><path d="M28 44c-2-14 12-20 18-10" fill="#4d7f3c"/><path d="M44 44c0-16 18-18 20-6" fill="#5d9447"/><circle cx="72" cy="38" r="8" fill="#b3262b"/><circle cx="86" cy="40" r="6" fill="#b3262b"/><path d="M58 30l6 12M66 30l-2 12" stroke-width="1.4"/></g></svg>`,
+  khach: `<svg viewBox="0 0 120 90"><path d="M8 52C30 22 90 22 112 52 90 78 30 78 8 52z" fill="#b5762f" stroke="${G}" stroke-width="1.6"/><path d="M26 52c14-14 54-14 68 0-14 14-54 14-68 0z" fill="#f1d98f" stroke="${G}" stroke-width="1"/><circle cx="60" cy="52" r="9" fill="${E}" stroke="${G}" stroke-width="1"/><circle cx="57" cy="49" r="2.5" fill="#ffd9a0"/>${flames(88)}</svg>`,
+  pastry: `<svg viewBox="0 0 120 90"><circle cx="60" cy="50" r="34" fill="#a76a2a" stroke="${G}" stroke-width="1.6"/><circle cx="60" cy="50" r="26" fill="none" stroke="${G}" stroke-width=".9" stroke-dasharray="3 3"/>${[0, 45, 90, 135].map(a => `<path d="M60 26v48" transform="rotate(${a} 60 50)" stroke="${G}" stroke-width=".8"/>`).join("")}<g transform="translate(60 50)" fill="none" stroke="${G}" stroke-width="1.2"><path d="M0-10a10 10 0 0 1 10 10M10 0a10 10 0 0 1-10 10M0 10a10 10 0 0 1-10-10M-10 0a10 10 0 0 1 10-10"/></g></svg>`,
+  coffee: `<svg viewBox="0 0 120 90"><path d="M44 30h28l-4 8c10 6 14 20 10 32-2 8-10 10-20 10s-18-2-20-10c-4-12 0-26 10-32z" fill="#7a3c1c" stroke="${G}" stroke-width="1.6"/><path d="M72 30l14-10" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/><path d="M48 54q12 6 24 0" stroke="${G}" stroke-width=".9" fill="none"/><g stroke="${G}" stroke-width="1" opacity=".6" fill="none"><path d="M52 22q4-6 0-12M62 22q4-6 0-12"/></g><ellipse cx="60" cy="82" rx="34" ry="4" fill="none" stroke="${G}" stroke-width=".9"/></svg>`,
+  sauce: `<svg viewBox="0 0 120 90"><path d="M30 40h60l-6 34c-1 6-6 8-24 8s-23-2-24-8z" fill="#1d1210" stroke="${G}" stroke-width="1.6"/><ellipse cx="60" cy="40" rx="30" ry="7" fill="#9b2c1f" stroke="${G}" stroke-width="1.3"/><path d="M76 34l18-20" stroke="${G}" stroke-width="2" stroke-linecap="round"/></svg>`,
+};
+const ETERNITY = `<svg viewBox="-50 -50 100 100"><g fill="none" stroke="${G}" stroke-width="3" stroke-linecap="round">${[0, 60, 120, 180, 240, 300].map(a => `<path d="M0 0 C 8 -14, 24 -14, 26 -30" transform="rotate(${a})"/>`).join("")}<circle r="6" fill="${E}" stroke="none"/></g></svg>`;
+
+/* ---------- menu (from the restaurant's own menu) ---------- */
+const MENU = [
+  { id: "grill", cat: "С мангала", items: [
+    { id: 1, a: "skewer", n: "Баранина корейка", d: "300 г · фирменный маринад Mangal", p: 120000, tag: "Хит" },
+    { id: 2, a: "skewer", n: "Люля-кебаб", d: "Говядина или баранина, 300 г", p: 70000 },
+    { id: 3, a: "skewer", n: "Свинина «пальчики»", d: "300 г", p: 100000 },
+    { id: 4, a: "skewer", n: "Говядина бон-филе", d: "300 г", p: 120000 },
+    { id: 5, a: "skewer", n: "Куриный кебаб с моцареллой", d: "С зеленью, 300 г", p: 70000 },
+    { id: 6, a: "skewer", n: "Бараньи язычки", d: "На углях", p: 90000 },
+    { id: 7, a: "fish", n: "Креветки на мангале", d: "150 г", p: 89000 },
+    { id: 8, a: "veg", n: "Овощи на мангале", d: "Перец, томаты, баклажан", p: 50000 },
+    { id: 9, a: "khach", n: "Хачапури на мангале", d: "С сыром и яйцом", p: 65000, tag: "Новинка" },
+  ]},
+  { id: "sets", cat: "Сеты", items: [
+    { id: 10, a: "platter", n: "Сет из свинины", d: "На 4 персоны", p: 600000 },
+    { id: 11, a: "platter", n: "Сет шашлыков", d: "На 5–6 персон", p: 650000, tag: "На компанию" },
+    { id: 12, a: "platter", n: "Мега-ассорти шашлыков", d: "На 8–10 персон", p: 1300000, tag: "Праздник" },
+    { id: 13, a: "lamb", n: "Баранья лопатка целиком", d: "3,2–3,5 кг · предзаказ за сутки", p: 850000, tag: "Предзаказ", hot: true },
+  ]},
+  { id: "starters", cat: "Закуски", items: [
+    { id: 14, a: "dolma", n: "Долма по-армянски", d: "8 шт · «Вкусно, как у бабушки»", p: 60000, tag: "Хит" },
+    { id: 15, a: "veg", n: "Яичница по-армянски", d: "С помидорами", p: 50000 },
+    { id: 16, a: "khach", n: "Лаваш с брынзой", d: "Зелень, помидоры", p: 55000 },
+  ]},
+  { id: "salads", cat: "Салаты", items: [
+    { id: 17, a: "salad", n: "Салат «Мангал»", d: "Фирменный", p: 70000 },
+    { id: 18, a: "salad", n: "Хоровац", d: "Печёные овощи на углях", p: 40000 },
+    { id: 19, a: "salad", n: "Салат «Армения»", d: "", p: 45000 },
+    { id: 20, a: "salad", n: "Ачик-чучук", d: "Томаты, лук, перец", p: 40000 },
+    { id: 21, a: "salad", n: "Грузинский", d: "С орехами", p: 70000 },
+  ]},
+  { id: "sweet", cat: "Десерты", items: [
+    { id: 22, a: "pastry", n: "Армянская гата", d: "Слоёная, с ванилью", p: 20000 },
+    { id: 23, a: "pastry", n: "Пахлава", d: "", p: 35000 },
+    { id: 24, a: "coffee", n: "Армянский кофе", d: "В джезве", p: 30000 },
+  ]},
+];
+const EXTRA = [{ id: 90, a: "sauce", n: "Ткемали", d: "", p: 20000 }, { id: 91, a: "sauce", n: "Мацони с чесноком", d: "", p: 15000 }];
+const ALL = MENU.flatMap(c => c.items).concat(EXTRA);
+const HITS = [1, 14, 12, 9, 13].map(id => ALL.find(i => i.id === id));
+const PROMOS = [
+  { k: "Только в боте", t: "−10% на первый заказ", p: "Скидка применится автоматически при оплате", cta: "Выбрать блюда", go: "grill", c1: "#5a1215", c2: "#1d0a09", art: "eternity" },
+  { k: "Предзаказ за сутки", t: "Баранья лопатка целиком", p: "3,2–3,5 кг на большую компанию · 850 000", cta: "Заказать", item: 13, c1: "#3d1c0e", c2: "#140906", art: "lamb" },
+  { k: "Для своих", t: "Мега-ассорти на 8–10 персон", p: "Все шашлыки Mangal на одном блюде", cta: "Смотреть сеты", go: "sets", c1: "#2c1a0c", c2: "#0f0906", art: "platter" },
+  { k: "Банкетный зал до 100 гостей", t: "Корпоративы от 500 000 за гостя", p: "Живая музыка, шоу-программа, 0% наценки на горячительное", cta: "Узнать подробнее", book: true, c1: "#14202a", c2: "#0b0d10", art: "eternity" },
+];
+const ZONES = [
+  { n: "Ближняя зона", d: "до 7 км от ресторана", p: 20000, r: 34, pin: [60, 38] },
+  { n: "Дальняя зона", d: "7–12 км", p: 30000, r: 58, pin: [80, 22] },
+];
+const STEPS = [["Заказ оплачен", "Ресторан получил заказ"], ["Принят", "Разжигаем угли"], ["Курьер в пути", "Скоро будет у вас"], ["Доставлен", "Приятного аппетита!"]];
+
+const S = { view: "client", page: "menu", cart: {}, mode: "delivery", zone: 0, pay: "click", order: null, step: 0, cat: "grill", sheet: null, promo: 0 };
+const fmt = n => n.toLocaleString("ru-RU").replace(/ |,/g, " ");
+const count = () => Object.values(S.cart).reduce((a, b) => a + b, 0);
+const sub = () => Object.entries(S.cart).reduce((a, [id, q]) => a + ALL.find(i => i.id == id).p * q, 0);
+const disc = () => Math.round(sub() * 0.1 / 1000) * 1000;
+const fee = () => S.mode === "delivery" ? ZONES[S.zone].p : 0;
+const total = () => sub() - disc() + fee();
+const phone = document.getElementById("phone");
+
+function toast(t) { const el = document.getElementById("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("show"), 1900); }
+function isOpen() { const h = new Date().getHours(); return h >= 11 && h < 23; }
+
+const tgbar = () => `<div class="tgbar"><img src="logo.jpg" alt=""><div><b>Мангал</b><small>мини-приложение</small></div><span class="x">✕</span></div>`;
+const qtyCtl = id => { const q = S.cart[id] || 0;
+  return q ? `<div class="qty"><button data-dec="${id}" aria-label="Убрать">−</button><b>${q}</b><button data-inc="${id}" aria-label="Добавить">+</button></div>`
+           : `<button class="add" data-inc="${id}" aria-label="Добавить">+</button>`; };
+const card = it => `<div class="card" data-open="${it.id}"><div class="pic">${it.tag ? `<span class="tag ${it.hot ? "hot" : ""}">${it.tag}</span>` : ""}${ART[it.a]}</div>
+  <div class="body"><div class="name">${it.n}</div><div class="desc">${it.d}</div><div class="row"><span class="price">${fmt(it.p)}</span>${qtyCtl(it.id)}</div></div></div>`;
+
+function menuPage() {
+  const open = isOpen();
+  return `<div class="screen" id="scr">
+    <div class="hero"><canvas id="embers"></canvas>
+      <div class="logo-wrap"><span class="ring"></span><img src="logo.jpg" alt="Мангал, кавказский ресторан"></div>
+      <h1>Мы уже <em>разожгли угли</em></h1>
+      <p>17 лет готовим лучшие шашлыки · армянская и европейская кухня</p>
+      <div class="live"><span class="${open ? "open" : "closed"}">${open ? "Открыто до 23:00" : "Откроемся в 11:00"}</span><span>Доставка от 20 000</span><span>Самовывоз</span></div>
+    </div>
+    <div class="band"></div>
+    <div class="h2">Акции <small>листайте →</small></div>
+    <div class="promos" id="promos">${PROMOS.map((p, i) => `<div class="promo" style="--c1:${p.c1};--c2:${p.c2}">
+      ${p.art === "eternity" ? ETERNITY : ART[p.art]}
+      <span class="k">${p.k}</span><b>${p.t}</b><p>${p.p}</p>
+      <button class="cta" ${p.item ? `data-open="${p.item}"` : p.go ? `data-jump="${p.go}"` : "data-book"}>${p.cta}</button></div>`).join("")}</div>
+    <div class="dots">${PROMOS.map((_, i) => `<i class="${i === S.promo ? "on" : ""}"></i>`).join("")}</div>
+    <div class="h2">Хиты с мангала</div>
+    <div class="hits">${HITS.map(it => `<div class="hit">${card(it)}</div>`).join("")}</div>
+    <div class="cats" id="cats">${MENU.map(c => `<button data-jump="${c.id}" class="${c.id === S.cat ? "on" : ""}">${c.cat}</button>`).join("")}</div>
+    ${MENU.map(c => `<div class="h2" id="sec-${c.id}">${c.cat}</div><div class="grid">${c.items.map(card).join("")}</div>`).join("")}
+    <div class="band" style="margin-top:22px"></div>
+    <div class="h2">Приходите в гости</div>
+    <div class="atmo">
+      <div><b>17 лет</b><span>готовим на углях</span></div>
+      <div><b>до 100</b><span>гостей в банкетном зале</span></div>
+      <div><b>Живая</b><span>музыка и уединённые кабинки</span></div>
+      <div><b>11–23</b><span>каждый день</span></div>
+      <button class="book" data-book>Забронировать стол</button>
+    </div>
+    <p class="quote">«Наслаждайтесь любимыми кавказскими блюдами, не выходя из дома»</p>
+    <p class="note">1-й тупик Кори Ниёзий, 11 · ориентир: Ирригационный институт</p>
+  </div>
+  <button class="mainbtn ${count() ? "show" : ""}" id="mainbtn" data-go="cart"><span>Корзина<span class="n">${count()}</span></span><span class="num">${fmt(sub())} сум</span></button>`;
+}
+
+function sheet() {
+  const it = ALL.find(i => i.id === S.sheet); if (!it) return "";
+  const q = S.cart[it.id] || 0;
+  return `<div class="veil" data-close><div class="sheet" role="dialog" aria-label="${it.n}">
+    <span class="grab"></span>
+    <div class="pic">${it.tag ? `<span class="tag ${it.hot ? "hot" : ""}">${it.tag}</span>` : ""}${ART[it.a]}</div>
+    <h3>${it.n}</h3><p>${it.d || "Из меню ресторана Мангал"}</p>
+    <button class="go" data-inc="${it.id}" data-closeafter><span>${q ? `В корзине ${q} · добавить ещё` : "Добавить в корзину"}</span><span class="num">${fmt(it.p)} сум</span></button>
+  </div></div>`;
+}
+
+function cartPage() {
+  const lines = Object.entries(S.cart).map(([id, q]) => { const it = ALL.find(i => i.id == id);
+    return `<div class="line"><span>${it.n}<br><small class="muted num">${fmt(it.p)} сум</small></span>${qtyCtl(it.id)}</div>`; }).join("");
+  const z = ZONES[S.zone];
+  const pays = [["click", "Click", "Оплата сразу"], ["payme", "Payme", "Оплата сразу"], ["link", "При получении", "Ссылка на оплату, когда курьер у двери"]];
+  const ups = EXTRA.filter(x => !S.cart[x.id]);
+  return `<div class="screen"><div class="page">
+    <button class="back" data-go="menu">← Меню</button>
+    <h2>Ваш заказ</h2>
+    <div class="box">${lines}</div>
+    ${ups.length ? `<div class="hint">К шашлыку берут</div><div class="upsell">${ups.map(x => `<button data-inc="${x.id}"><b>${x.n}</b><span class="num">+${fmt(x.p)} сум</span></button>`).join("")}</div>` : ""}
+    <div class="seg"><button data-mode="delivery" class="${S.mode === "delivery" ? "on" : ""}">Доставка</button><button data-mode="pickup" class="${S.mode === "pickup" ? "on" : ""}">Самовывоз</button></div>
+    ${S.mode === "delivery" ? `
+      <div class="map"><span class="ring" style="width:${z.r * 2}%;height:${z.r * 3.2}%"></span><span class="home"><img src="logo.jpg" alt=""></span><span class="pin" style="left:${z.pin[0]}%;top:${z.pin[1] + 30}%">📍</span></div>
+      <p class="hint">Клиент ставит точку на карте, бот сам определяет зону и цену доставки</p>
+      ${ZONES.map((zz, i) => `<div class="opt ${S.zone === i ? "on" : ""}" data-zone="${i}" tabindex="0"><span class="dot"></span><span class="grow">${zz.n}<small>${zz.d}</small></span><b class="num">${fmt(zz.p)}</b></div>`).join("")}`
+    : `<div class="box"><b>Мангал на Ирригационном</b><p class="muted" style="font-size:13px;margin-top:4px">1-й тупик Кори Ниёзий, 11 · будет готово через ~30 минут</p></div>`}
+    <div class="sec-t">Оплата</div>
+    ${pays.filter(p => S.mode === "delivery" || p[0] !== "link").map(p => `<div class="opt ${S.pay === p[0] ? "on" : ""}" data-pay="${p[0]}" tabindex="0"><span class="dot"></span><span class="grow">${p[1]}<small>${p[2]}</small></span></div>`).join("")}
+    <div class="box">
+      <div class="line"><span class="muted">Блюда</span><span class="num">${fmt(sub())} сум</span></div>
+      <div class="line"><span class="muted">Скидка на первый заказ −10%</span><span class="num" style="color:var(--ok)">−${fmt(disc())} сум</span></div>
+      <div class="line"><span class="muted">Доставка</span><span class="num">${S.mode === "delivery" ? fmt(fee()) + " сум" : "—"}</span></div>
+      <div class="line total"><span>Итого</span><span class="num">${fmt(total())} сум</span></div>
+    </div>
+  </div></div>
+  <button class="mainbtn show" data-checkout><span>${S.pay === "link" ? "Оформить заказ" : "Оплатить"}</span><span class="num">${fmt(total())} сум</span></button>`;
+}
+
+function statusPage() {
+  const o = S.order;
+  const first = o.pay === "link" ? ["Заказ отправлен", "Оплата по ссылке, когда курьер у двери"] : STEPS[0];
+  return `<div class="screen"><div class="page">
+    <h2 style="text-align:center">${S.step >= 3 ? "Приятного аппетита!" : "Заказ №" + o.no}</h2>
+    <p class="muted" style="text-align:center;font-size:13px">${fmt(o.total)} сум · ${o.mode === "delivery" ? "доставка, " + ZONES[o.zone].n.toLowerCase() : "самовывоз"}</p>
+    <div class="skewer"><svg viewBox="0 0 300 70"><path d="M10 40H290" stroke="${G}" stroke-width="2.5" stroke-linecap="round"/><path d="M282 34l10 6-10 6" stroke="${G}" stroke-width="2.5" fill="none"/>
+      ${[0, 1, 2, 3].map(i => `<rect class="cube ${i <= S.step ? "lit" : ""}" x="${40 + i * 58}" y="24" width="38" height="32" rx="8" fill="#2a1a16" stroke="${G}" stroke-width="1.5"/>`).join("")}</svg></div>
+    <div class="box steps">${STEPS.map((s, i) => { const [t, d] = i === 0 ? first : s; return `<div class="st ${i <= S.step ? "done" : i === S.step + 1 ? "now" : ""}"><span class="c">${i <= S.step ? "✓" : ""}</span><div><b>${t}</b><small>${d}</small></div></div>`; }).join("")}</div>
+    <p class="hint" style="text-align:center">Каждый статус приходит клиенту сообщением в Telegram.<br>Переключитесь на «Персонал» и двигайте заказ кнопками.</p>
+    <button class="back" style="align-self:center" data-new>Сделать новый заказ</button>
+  </div></div>`;
+}
+
+function staffView() {
+  const o = S.order;
+  let body = `<div class="empty">Здесь появятся заказы из бота.<br><br>Соберите заказ во вкладке «Клиент».</div>`;
+  if (o) {
+    const items = o.items.map(([id, q]) => `• ${ALL.find(i => i.id == id).n} × ${q}`).join("\n");
+    body = `<div class="sys">Сегодня</div>
+      <div class="msg"><div class="from">Мангал · Бот</div>🆕 Заказ №${o.no} — ${o.pay === "link" ? "оплата при получении" : "ОПЛАЧЕН ✅ " + (o.pay === "click" ? "Click" : "Payme")}
+
+${items}
+
+${o.mode === "delivery" ? `🛵 Доставка · ${ZONES[o.zone].n} (${fmt(ZONES[o.zone].p)} сум)
+📍 ул. Мирабад, 12 — открыть на карте` : "🏃 Самовывоз через ~30 мин"}
+👤 Азиз · +998 90 *** ** 12 · первый заказ
+💰 Итого: ${fmt(o.total)} сум<div class="time">${o.time}</div></div>
+      <div class="kb">
+        <button data-step="1" ${S.step !== 0 ? "disabled" : ""}>✅ Принять</button>
+        <button data-step="2" ${S.step !== 1 ? "disabled" : ""}>🛵 Курьер вызван</button>
+        <button class="full" data-step="3" ${S.step !== 2 ? "disabled" : ""}>📦 Доставлен</button>
+      </div>
+      ${S.step >= 2 && o.mode === "delivery" ? `<div class="msg"><div class="from">Мангал · Бот</div>Сколько стоил курьер по факту? Запишу для отчёта.<div class="kb" style="margin-top:8px;max-width:100%"><button data-cost>22 000</button><button data-cost>28 000</button></div></div>` : ""}
+      ${S.step >= 1 ? `<div class="sys">Клиенту отправлено: «${STEPS[S.step][0]}»</div>` : ""}`;
+  }
+  return `<div class="tgbar staff"><div class="ava">👨‍🍳</div><div><b>Мангал · Заказы</b><small>группа персонала · 4 участника</small></div></div><div class="chat">${body}</div>`;
+}
+
+/* ---------- embers ---------- */
+let raf;
+function embers() {
+  cancelAnimationFrame(raf);
+  const c = document.getElementById("embers"); if (!c) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const ctx = c.getContext("2d"), dpr = Math.min(devicePixelRatio || 1, 2);
+  const W = c.width = c.offsetWidth * dpr, H = c.height = c.offsetHeight * dpr;
+  const P = Array.from({ length: 46 }, () => spawn(true));
+  function spawn(any) { return { x: W * (.25 + Math.random() * .5), y: any ? Math.random() * H : H + 10, v: (.4 + Math.random() * 1.1) * dpr, r: (.6 + Math.random() * 1.8) * dpr, s: Math.random() * 6, life: 1 }; }
+  (function tick() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of P) {
+      p.y -= p.v; p.s += .03; p.x += Math.sin(p.s) * .4 * dpr; p.life = Math.min(1, p.y / H + .15);
+      if (p.y < -10) Object.assign(p, spawn(false));
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+      g.addColorStop(0, `rgba(255,190,110,${.9 * p.life})`); g.addColorStop(.4, `rgba(240,122,42,${.5 * p.life})`); g.addColorStop(1, "rgba(240,122,42,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, 7); ctx.fill();
+    }
+    raf = requestAnimationFrame(tick);
+  })();
+}
+
+function wire() {
+  const pr = document.getElementById("promos");
+  if (pr) pr.addEventListener("scroll", () => {
+    const i = Math.round(pr.scrollLeft / (pr.firstElementChild.offsetWidth + 10));
+    if (i !== S.promo) { S.promo = i; document.querySelectorAll(".dots i").forEach((d, j) => d.classList.toggle("on", j === i)); }
+  }, { passive: true });
+  const scr = document.getElementById("scr");
+  if (scr) scr.addEventListener("scroll", () => {
+    let cur = MENU[0].id;
+    for (const c of MENU) { const el = document.getElementById("sec-" + c.id); if (el && el.offsetTop - 70 <= scr.scrollTop) cur = c.id; }
+    if (cur !== S.cat) { S.cat = cur; document.querySelectorAll("#cats button").forEach(b => b.classList.toggle("on", b.dataset.jump === cur)); }
+  }, { passive: true });
+}
+
+function render() {
+  document.querySelectorAll(".switch button").forEach(b => b.classList.toggle("on", b.dataset.view === S.view));
+  if (S.view === "staff") { cancelAnimationFrame(raf); phone.innerHTML = staffView(); return; }
+  const prev = document.getElementById("scr"), top = prev ? prev.scrollTop : 0, pl = document.getElementById("promos")?.scrollLeft || 0;
+  phone.innerHTML = tgbar() + (S.page === "menu" ? menuPage() : S.page === "cart" ? cartPage() : statusPage()) + (S.sheet ? sheet() : "");
+  if (S.page === "menu") { document.getElementById("scr").scrollTop = top; document.getElementById("promos").scrollLeft = pl; embers(); wire(); }
+}
+
+function flyFrom(el) {
+  const btn = document.getElementById("mainbtn"); if (!el || !btn) return;
+  const pr = phone.getBoundingClientRect(), a = el.getBoundingClientRect(), b = btn.getBoundingClientRect();
+  const d = document.createElement("span"); d.className = "fly";
+  d.style.left = (a.left - pr.left + a.width / 2 - 7) + "px"; d.style.top = (a.top - pr.top + a.height / 2 - 7) + "px";
+  phone.appendChild(d);
+  requestAnimationFrame(() => { d.style.transform = `translate(${b.left + 40 - a.left - a.width / 2}px, ${b.top + b.height / 2 - a.top - a.height / 2}px) scale(.5)`; d.style.opacity = ".2"; });
+  setTimeout(() => { d.remove(); btn.classList.remove("bump"); void btn.offsetWidth; btn.classList.add("bump"); }, 560);
+}
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("button, .opt, .card, .veil"); if (!t) return;
+  const d = t.dataset;
+  if (d.view) { S.view = d.view; render(); return; }
+  if (d.inc) {
+    e.stopPropagation();
+    const first = !S.cart[d.inc];
+    S.cart[d.inc] = (S.cart[d.inc] || 0) + 1;
+    if ("closeafter" in d) S.sheet = null;
+    const wasHidden = S.page === "menu" && count() === 1;
+    render();
+    if (S.page === "menu" && !wasHidden) { const src = phone.querySelector(`[data-dec="${d.inc}"]`); flyFrom(src); }
+    if (S.page === "menu" && first) toast("Добавлено: " + ALL.find(i => i.id == d.inc).n);
+    return;
+  }
+  if (d.dec) { e.stopPropagation(); S.cart[d.dec]--; if (!S.cart[d.dec]) delete S.cart[d.dec]; if (!count() && S.page === "cart") S.page = "menu"; }
+  else if (d.open) { e.stopPropagation(); S.sheet = +d.open; }
+  else if ("close" in d) { if (e.target === t) S.sheet = null; else return; }
+  else if (d.jump) {
+    S.cat = d.jump; render();
+    const scr = document.getElementById("scr"), el = document.getElementById("sec-" + d.jump);
+    scr.scrollTo({ top: el.offsetTop - 56, behavior: "smooth" }); return;
+  }
+  else if ("book" in d) { toast("В боте здесь будет бронь стола и банкета"); return; }
+  else if (d.go) { S.page = d.go; if (d.go === "cart") document.getElementById("phone").scrollTop = 0; }
+  else if (d.mode) { S.mode = d.mode; if (S.mode === "pickup" && S.pay === "link") S.pay = "click"; }
+  else if (d.zone) { S.zone = +d.zone; }
+  else if (d.pay) { S.pay = d.pay; }
+  else if ("checkout" in d) {
+    S.order = { no: 1000 + Math.floor(Math.random() * 9000), items: Object.entries(S.cart), mode: S.mode, zone: S.zone, pay: S.pay, total: total(), time: new Date().toTimeString().slice(0, 5) };
+    S.step = 0; S.page = "status"; S.cart = {};
+    toast(S.pay === "link" ? "Заказ отправлен в ресторан" : "Оплата прошла, заказ в ресторане");
+  }
+  else if (d.step) { S.step = +d.step; toast("Клиент получил: «" + STEPS[S.step][0] + "»"); }
+  else if ("cost" in d) { toast("Записано: курьер " + t.textContent + " сум"); return; }
+  else if ("new" in d) { S.order = null; S.page = "menu"; }
+  else if (t.classList.contains("card")) return;
+  render();
+});
+document.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.classList.contains("opt")) { e.preventDefault(); e.target.click(); } if (e.key === "Escape" && S.sheet) { S.sheet = null; render(); } });
+
+render();
+</script>
+</body>
+</html>
